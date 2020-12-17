@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+TREE=$(swaymsg -t get_tree)
+
+SCRATCHPAD_LIST=$(echo "${TREE}" |
+  jq -r '.nodes[] | select(.name == "__i3").nodes[] | select(.name == "__i3_scratch").floating_nodes[].name')
+
+if [ -z "${SCRATCHPAD_LIST}" ]; then
+  exit 0
+fi
+
+SELECTED=$(echo "${SCRATCHPAD_LIST}" | fzf \
+  --print-query \
+  --no-info \
+  --bind "alt-enter:execute(echo ALT{})+accept")
+
+if [[ "${SELECTED}" =~ ^"ALT" ]]; then
+  SELECTED=$(echo "${SELECTED}" | head -n1 | sed "s/^ALT//")
+  ALT=1
+else
+  SELECTED=$(echo "${SELECTED}" | tail -n1)
+  ALT=0
+fi
+
+SELECTED_ID=$(echo "${TREE}" |
+  jq ".nodes[] | select(.name == \"__i3\").nodes[] | select(.name == \"__i3_scratch\").floating_nodes[] | select(.name == \"${SELECTED}\").id")
+
+swaymsg "[con_id=${SELECTED_ID}] focus"
+
+if [[ ${ALT} = 1 ]]; then
+  swaymsg "[con_id=${SELECTED_ID}] floating toggle"
+fi
