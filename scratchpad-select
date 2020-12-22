@@ -23,7 +23,7 @@ else
 fi
 
 SELECTED_ID=$(echo "${TREE}" |
-  jq ".nodes[] | select(.name == \"__i3\").nodes[] | select(.name == \"__i3_scratch\").floating_nodes[] | select(.name == \"${SELECTED}\").id")
+  jq "[.nodes[] | select(.name == \"__i3\").nodes[] | select(.name == \"__i3_scratch\").floating_nodes[] | select(.name == \"${SELECTED}\")][0].id")
 
 swaymsg "[con_id=${SELECTED_ID}] focus"
 
