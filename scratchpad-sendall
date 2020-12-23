@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+TREE=$(swaymsg -t get_tree)
+
+CURRENT_OUTPUT=$(swaymsg -t get_outputs |
+  jq -r ".[] | select(.focused)" |
+  jq -r ".name"
+)
+
+CURRENT_WORKSPACE=$(echo "${TREE}" |
+  jq -r ".nodes[] | select(.name == \"${CURRENT_OUTPUT}\").current_workspace"
+)
+
+CURRENT_FOCUS=$(echo "${TREE}" |
+  jq ".. | select(.type?) | select(.focused==true).id"
+)
+
+TILES=$(echo "${TREE}" |
+  jq -r ".nodes[] | select(.name == \"${CURRENT_OUTPUT}\").nodes[] | select(.name == \"${CURRENT_WORKSPACE}\").nodes[] | .. | (.id|tostring) + \" \" + .name?" |
+    grep -e "[0-9]* ." |
+    grep -oP "(^\d+)"
+)
+
+FLOATS=$(echo "${TREE}" |
+  jq -r ".nodes[] | select(.name == \"${CURRENT_OUTPUT}\").nodes[] | select(.name == \"${CURRENT_WORKSPACE}\").floating_nodes[] | .. | (.id|tostring) + \" \" + .name?" |
+    grep -e "[0-9]* ." |
+    grep -oP "(^\d+)"
+)
+
+ALL_WINDOWS=$(printf "%s" "${TILES}"$'\n'"${FLOATS}")
+
+while IFS= read -r CON_ID; do
+  if [ "${CON_ID}" != "${CURRENT_FOCUS}" ]; then
+    echo "${CON_ID}"
+    swaymsg "[con_id=${CON_ID}]" move scratchpad
+  fi
+done <<< "${ALL_WINDOWS}"
+

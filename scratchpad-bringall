@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+TREE=$(swaymsg -t get_tree)
+
+SCRATCHPAD_LIST=$(echo "${TREE}" |
+  jq -r '.nodes[] | select(.name == "__i3").nodes[] | select(.name == "__i3_scratch").floating_nodes[].id')
+
+if [ -z "${SCRATCHPAD_LIST}" ]; then
+  exit 0
+fi
+
+CURRENT_FOCUS=$(echo "${TREE}" |
+  jq ".. | select(.type?) | select(.focused==true).id"
+)
+
+while IFS= read -r CON_ID; do
+  if [ "${CON_ID}" != "${CURRENT_FOCUS}" ]; then
+    echo "${CON_ID}"
+    swaymsg "[con_id=${CON_ID}]" focus
+    swaymsg "[con_id=${CON_ID}]" floating toggle
+  fi
+done <<< "${SCRATCHPAD_LIST}"
+
+swaymsg "[con_id=${CURRENT_FOCUS}]" focus
+floating toggle
