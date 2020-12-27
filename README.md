@@ -34,7 +34,7 @@ Send all windows from the current workspace, except the focus, to the scratchpad
 Add the following (or similar) to your sway config:
 
 ```
-bindsym $mod+backslash exec termite --name=launcher -e /path/to/scratchpad-sendall
+bindsym $mod+backslash exec /path/to/scratchpad-sendall
 ```
 
 Hit `$mod+\\` to open prompt
@@ -48,7 +48,7 @@ Bring all windows from scratchpad to the current workspace and tile them all
 Add the following (or similar) to your sway config:
 
 ```
-bindsym $mod+shift+backslash exec termite --name=launcher -e /path/to/scratchpad-bringall
+bindsym $mod+shift+backslash exec /path/to/scratchpad-bringall
 ```
 
 Hit `$mod+|` to open prompt
