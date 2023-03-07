@@ -37,7 +37,7 @@ Add the following (or similar) to your sway config:
 bindsym $mod+backslash exec /path/to/scratchpad-sendall
 ```
 
-Hit `$mod+\\` to open prompt
+Hit `$mod+\ ` to open prompt
 
 ## scratchpad-bringall
 

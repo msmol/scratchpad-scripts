@@ -3,7 +3,8 @@
 TREE=$(swaymsg -t get_tree)
 
 SCRATCHPAD_LIST=$(echo "${TREE}" |
-  jq -r '.nodes[] | select(.name == "__i3").nodes[] | select(.name == "__i3_scratch").floating_nodes[].name')
+  jq -r '.nodes[] | select(.name == "__i3").nodes[] | select(.name == "__i3_scratch").floating_nodes[].name' |
+  grep -v "Sharing Indicator")
 
 if [ -z "${SCRATCHPAD_LIST}" ]; then
   exit 0
@@ -27,6 +28,6 @@ SELECTED_ID=$(echo "${TREE}" |
 
 swaymsg "[con_id=${SELECTED_ID}] focus"
 
-if [[ ${ALT} = 1 ]]; then
+if [[ ${ALT} = 0 ]]; then
   swaymsg "[con_id=${SELECTED_ID}] floating toggle"
 fi
