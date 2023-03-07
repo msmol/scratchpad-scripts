@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+SCRATCHPAD_LIST=$(echo "$(swaymsg -t get_tree)" |
+  jq -r '.nodes[] | select(.name == "__i3").nodes[] | select(.name == "__i3_scratch").floating_nodes[].name' |
+  grep -v "Sharing Indicator")
+
+if [ -z "${SCRATCHPAD_LIST}" ]; then
+  exit 1
+fi
