@@ -26,8 +26,10 @@ fi
 SELECTED_ID=$(echo "${TREE}" |
   jq "[.nodes[] | select(.name == \"__i3\").nodes[] | select(.name == \"__i3_scratch\").floating_nodes[] | select(.name == \"${SELECTED}\")][0].id")
 
-swaymsg "[con_id=${SELECTED_ID}] focus"
+if [[ "${SELECTED_ID}" != "null" ]]; then
+  swaymsg "[con_id=${SELECTED_ID}] focus"
 
-if [[ ${ALT} = 0 ]]; then
-  swaymsg "[con_id=${SELECTED_ID}] floating toggle"
+  if [[ ${ALT} = 0 ]]; then
+    swaymsg "[con_id=${SELECTED_ID}] floating toggle"
+  fi
 fi
